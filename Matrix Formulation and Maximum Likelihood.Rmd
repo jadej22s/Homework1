@@ -1,0 +1,60 @@
+---
+title: "Homework 1: Matrix Formulation and Maximum Likelihood"
+subtitle: "STAT 340: Applied Regression"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Iris Data set
+
+You may recall the famous iris data set, which was collected by Edgar Anderson in the 1930s to study the relationship between iris species (`setosa`, `versicolor`, `virginica`) and measurement variables: sepal length, sepal width, petal length, and petal width. **We would like to see if the three species have different sepal widths, on average.**
+
+
+### (1) Assuming that the necessary conditions are satisfied, write down the relevant linear model element-wise (the way you would have written this model before being introduced to matrix notation for linear models). The iris data set is built into R, so you may consult that for the relevant number of observations. Be sure to define what your explanatory variable(s) (e.g. $x_i$ is only useful if you tell me what $x_i$ represents).
+
+```{r}
+data(iris)
+```
+
+### (2) Translate the model from (1) into matrix form, showing your steps. 
+
+*Note: If you are typing this, you may find the following shorthand useful.*
+
+- $\mathbf{1}_n$ is an $n\times 1$ vector of 1's
+- $\mathbf{0}_n$ is an $n\times 1$ vector of 0's
+- You can use dots so you don't have to type every element, as long as the structure is clear. For example,
+
+$$\mathbf{x}_j=\left[\begin{matrix}x_{1j} \\ x_{2j} \\ \vdots \\ x_{nj} \end{matrix}\right]$$
+
+$$\boldsymbol{\Sigma}=\left[\begin{matrix}\sigma^2_\epsilon & \rho & \cdots & \rho\\
+                                          \rho & \sigma^2_\epsilon & \cdots & \rho \\
+                                          \vdots & \rho & \ddots & \vdots \\ 
+                                          \rho & \rho & \cdots & \sigma^2_\epsilon\\ \end{matrix}\right]$$
+                                          
+                                          
+### (3) Find X using R. You will find the function `model.matrix()` useful - see the help documentation (`?model.matrix`) for details. Store the result of `model.matrix()` as X.
+
+```{r}
+X <- model.matrix(Sepal.Width ~ Species, data=iris)
+str(X)
+class(X)
+
+solve(t(X)%*%X)%*%t(X)%*%iris$Sepal.Width
+```
+
+
+### (4) Find the maximum likelihood estimates for the coefficients in your model using
+$$\hat{\boldsymbol{\beta}}=(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}.$$
+
+
+
+### (5) Fit the model using the `lm()` function to verify your result in (4). If the results do not match, check your work in (2) and (3). 
+
+```{r}
+summary(lm(Sepal.Width ~ Species, data=iris))
+```
+
